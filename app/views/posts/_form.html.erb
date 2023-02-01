@@ -22,16 +22,14 @@
   </div>
 
   <div>
-    <% post.files.each do |file| %>
-      <%= image_tag(file.variant(resize_to_fill: [100, 100])) %>
-    <% end %>
-  </div>
-
-  <div>
     <%= form.label :files, style: "display: block" %>
     <%= dropzone_controller_div do %>
       <% form.object.files.each do |file| %>
-        <%= form.hidden_field :files, multiple: true, value: file.signed_id %>
+        <%= form.hidden_field :files, multiple: true, value: file.signed_id,
+                              data: { filename: file.blob.filename,
+                                      id: file.id,
+                                      src: rails_blob_url(file.variant(resize_to_fill: [100, 100])) },
+                              class: 'files', id: "file_#{file.id}" %>
       <% end %>
       <%= form.file_field :files, direct_upload: true, multiple: true, 'data-dropzone-target': 'input' %>
       <div class="dropzone-msg dz-message needsclick text-gray-600">

@@ -29,6 +29,10 @@ export function removeElement(el) {
   }
 }
 
+export function removeElementById(id) {
+  document.getElementById(id).remove();
+}
+
 export function insertAfter(el, referenceNode) {
   return referenceNode.parentNode.insertBefore(el, referenceNode.nextSibling);
 }

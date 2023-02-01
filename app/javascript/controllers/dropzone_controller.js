@@ -3,10 +3,10 @@ import { DirectUpload } from "@rails/activestorage";
 import { Dropzone } from "dropzone";
 import {
   getMetaValue,
-  toArray,
   findElement,
   removeElement,
-  insertAfter
+  insertAfter,
+  removeElementById
 } from "./helpers";
 
 export default class extends Controller {
@@ -16,6 +16,7 @@ export default class extends Controller {
     this.dropZone = this.createDropZone(this);
     this.hideFileInput();
     this.bindEvents();
+    this.displayFilesFromServer(this)
     Dropzone.autoDiscover = false;
   }
 
@@ -33,7 +34,13 @@ export default class extends Controller {
     });
 
     this.dropZone.on("removedfile", file => {
-      file.controller && removeElement(file.controller.hiddenInput);
+      if (file.controller) {
+        if (file.id) {
+          removeElementById(`file_${file.id}`);
+        } else {
+          removeElement(file.controller.hiddenInput);
+        }
+      }
     });
 
     this.dropZone.on("canceled", file => {
@@ -82,6 +89,24 @@ export default class extends Controller {
 
   createDirectUploadController(source, file) {
     return new DirectUploadController(source, file);
+  }
+
+  displayFilesFromServer(controller){
+    let existingFiles = document.getElementsByClassName('files')
+    if (existingFiles.length > 0){
+      Array.from(existingFiles).forEach(function(file, index) {
+        let callback = null; // Optional callback when it's done
+        let crossOrigin = null; // Added to the `img` tag for crossOrigin handling
+        let resizeThumbnail = false; // Tells Dropzone whether it should resize the image first
+        let mockFile = {
+          name: file.dataset.filename,
+          id: file.dataset.id,
+          accepted: true //this is required to set maxFiles count automatically
+        }
+        controller.dropZone.files.push(mockFile);
+        controller.dropZone.displayExistingFile(mockFile, file.dataset.src, callback, crossOrigin, resizeThumbnail);
+      });
+    }
   }
 
   createDropZone(controller) {
