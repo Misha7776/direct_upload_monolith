@@ -1,0 +1,19 @@
+<div id="<%= dom_id post %>">
+  <p>
+    <strong>Title:</strong>
+    <%= post.title %>
+  </p>
+
+  <p>
+    <strong>Content:</strong>
+    <%= post.content %>
+  </p>
+
+  <div>
+    <% post.files.each do |file| %>
+      <%= image_tag(file.variant(resize_to_fill: [100, 100])) %>
+      <%#= link_to 'Delete',  %>
+    <% end %>
+  </div>
+
+</div>

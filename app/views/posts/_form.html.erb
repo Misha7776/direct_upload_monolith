@@ -1,0 +1,47 @@
+<%= form_with(model: post) do |form| %>
+  <% if post.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(post.errors.count, "error") %> prohibited this post from being saved:</h2>
+
+      <ul>
+        <% post.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :title, style: "display: block" %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div class="mt-2 mb-2">
+    <%= form.label :content, style: "display: block" %>
+    <%= form.rich_text_area :content %>
+  </div>
+
+  <div>
+    <% post.files.each do |file| %>
+      <%= image_tag(file.variant(resize_to_fill: [100, 100])) %>
+    <% end %>
+  </div>
+
+  <div>
+    <%= form.label :files, style: "display: block" %>
+    <%= dropzone_controller_div do %>
+      <% form.object.files.each do |file| %>
+        <%= form.hidden_field :files, multiple: true, value: file.signed_id %>
+      <% end %>
+      <%= form.file_field :files, direct_upload: true, multiple: true, 'data-dropzone-target': 'input' %>
+      <div class="dropzone-msg dz-message needsclick text-gray-600">
+        <h3 class="dropzone-msg-title">Drag here to upload or click here to browse</h3>
+        <span class="dropzone-msg-desc text-sm">2 MB file size maximum. Allowed file types png, jpg.</span>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-5">
+    <%= form.submit %>
+  </div>
+<% end %>
